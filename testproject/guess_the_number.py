@@ -38,9 +38,7 @@ try:
 
     # * Amikor megvan a helyes szám, ellenőrizd le, hogy a szükséges lépések száma mit az aplikáció kijelez egyezik-e a saját belső számlálóddal.
     #
-    # * Teszteld le, hogy az applikáció helyesen kezeli az intervallumon kívüli találgatásokat. Az applikéció -19 vagy 255 értéknél nem szabad, hogy összeomoljon. Azt kell kiírnia, hogy alá vagy fölé találtál-e.
-    #
-    # Az ellenőrzésekhez __NEM__ kell teszt keretrendszert használnod (mint pl a pytest).
+
 
     # gombok
     #restart_button = driver.find_element_by_class_name('btn btn-warning btn-sm pull-right pull-down')
@@ -51,30 +49,46 @@ try:
     # mezok
     # How_many_guests_in_your_group_dd = driver.find_element_by_xpath('//*[@class="errorTxt"]//select')
     guess_input = driver.find_element_by_xpath('/html/body/div/div[2]/input')
-    #guess_input = driver.find_element_by_class_name(form-control ng-valid ng-touched ng-not-empty ng-dirty ng-valid-number')
     guess_number_out = driver.find_element_by_xpath('/html/body/div/div[3]/p')
-    #guess_number_out = driver.find_element_by_class_name('text - info')
-    guess_higher_out = driver.find_element_by_xpath('/html/body/div/p[4]')
-    #guess_higher_out = driver.find_element_by_class_name('alert alert-warning')
+    guess_judgement_lower = driver.find_element_by_xpath('/html/body/div/p[3]')
+    guess_judgement_higher = driver.find_element_by_xpath('/html/body/div/p[4]')
+    guess_judgement_yes = driver.find_element_by_xpath('/html/body/div/p[5]')
+    number_of_guesses = driver.find_element_by_xpath('/html/body/div/div[3]/p/span')
 
     # TC1:
+    # * Egy tesztet kell írnod ami addig találgat a megadott intervallumon belül amíg ki nem találja a helyes számot.
+    # Nem jár plusz pont azért ha úgy automatizálsz, hogy minnél optimálisabban és gyosabban találja ki a helyes számot a program
+    #
+    # * Amikor megvan a helyes szám, ellenőrizd le, hogy a szükséges lépések száma mit az aplikáció kijelez egyezik-e a saját belső számlálóddal.
+    #while not (guess_judgement.value == 'Yes! That is it.'):
+    for i in range(1, 101):
+        #print(guess_judgement.value)
+        guess_input.clear()
+        guess_input.send_keys(i)
+        guess_button.click()
+        if(guess_judgement_yes.text == "Yes! That is it."):
+            print(guess_judgement_yes.text)
+            break
+        time.sleep(0)
 
-    for i in range(99):
-        guess_number_out.sendkeys(i)
+
+    # TC2:
+    # * Teszteld le, hogy az applikáció helyesen kezeli az intervallumon kívüli találgatásokat.
+    # Az applikéció -19 vagy 255 értéknél nem szabad, hogy összeomoljon. Azt kell kiírnia, hogy alá vagy fölé találtál-e.
+
+    restart_button.click()
+    guess_input.send_keys(-19)
+    guess_button.click()
+    print(guess_judgement_higher.text)
+    assert guess_judgement_higher.text == "Guess higher."
+    time.sleep(3)
+    restart_button.click()
+    guess_input.send_keys(255)
+    guess_button.click()
+    print(guess_judgement_lower.text)
+    assert guess_judgement_lower.text == "Guess lower."
+
     time.sleep(5)
 
-    # test_set('abc@abc.com')
-    # assert driver.find_element_by_xpath('/html/body/form/h2').text == "Your message was sent successfully." \
-    #                                                                   " Thanks! We'll be in touch as soon as we can," \
-    #                                                                   " which is usually like lightning (Unless we're sailing or eating tacos!)."
-    # time.sleep(5)
-    # #TC2:
-    # test_set('abc@abc')
-    # # Készíts tesztesetet az e - mail cím validációjára.
-    # assert driver.find_element_by_xpath('/html/body/form/h2').text == "Your message was sent successfully." \
-    #                                                                   " Thanks! We'll be in touch as soon as we can," \
-    #                                                                   " which is usually like lightning (Unless we're sailing or eating tacos!)."
-
-    # Az email validáció hibás, mert simán megengedi a továbblépést hiányzó domain-ű emeil cimmel
 finally:
     driver.close()
