@@ -70,7 +70,10 @@ try:
     time.sleep(5)
     save_button.click()
     time.sleep(5)
-    assert (len(movie_titles) == 25)
+    # Sajnos, ha movie_titles alatt hivatkozok rá, akkor nem kérdezi le újra,
+    # de ha kiírom a tényleges lekérdezést, akkor jó
+    #assert ((len(movie_titles)) == 25)
+    assert (len(driver.find_elements_by_xpath('//h2')) == 25)
 
 except NoSuchElementException as exc:
     print("Hiba történt: ", exc)
